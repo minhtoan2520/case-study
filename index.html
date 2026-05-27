@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    form{
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    table{
+        margin-top: 20px;
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 15px;
+        margin-left: auto;
+        margin-left: auto;
+        margin: 0 auto;
+        border-collapse: collapse;
+    }
+    tbody tr:hover {
+        background-color: #ee8686;
+        transition: 0.3s;
+        
+    }
+    button:hover{
+        background-color: rgb(52, 156, 226);
+        transition: 0.2s;
+    }
+    button{
+        padding: 10px 20px;
+    }
+    th, td{
+        padding-left: 50px;
+        padding-right: 50px
+          
+    }
+    th{
+        padding-bottom: 20px;
+        padding-top: 20px;
+        background-color: rgb(132, 184, 12);
+        border: 1px solid black;
+        
+    }
+    body{
+        text-align: center;
+        background-color: antiquewhite;
+    }
+    input{
+        padding: 10px;
+        font-size: 15px;
+    }
+    h1{
+        color: #61104f;
+        font-size: 40px;
+        background-color: #e9df57;
+    }
+</style>
+<body>
+    <h1>Quản lý danh sách cửa hàng hoa quả</h1>
+    <button type="button" onclick="logout()" style="margin-left:90%;">Đăng xuất</button>
+    <hr>
+    <button type="button" onclick="addfruit()">Thêm quả</button>
+    <br><br>
+    <form id="form1" style="display: none;">
+        <input type="text" id="addid" placeholder="Nhập mã sản phẩm">
+        <input type="text" id="addname" placeholder="Nhập tên loại quả">
+        <input type="number" id="addprice" placeholder="Nhập giá">
+        <input type="number" id="addquantity" placeholder="Nhập số lượng">
+        <input type="text" id="addorigin" placeholder="Nhập nguồn gốc">
+        <button type="button" onclick="addfruit2()">Thêm</button>
+    </form>
+
+    <form id="form2" style="display: none;">
+        <input type="text" id="editid" placeholder="Sửa mã sản phẩm">
+        <input type="text" id="editname" placeholder="Sửa tên sản phẩm">
+        <input type="number" id="editprice" placeholder="Sửa giá">
+        <input type="number" id="editquantity" placeholder="Sửa số lượng">
+        <input type="text" id="editorigin" placeholder="Sửa nguồn gốc">
+        <button type="button" onclick="update2()">Cập nhật</button>
+    </form>
+    <table border="1" cellspacing="0" id="list">
+        <thead>
+            <tr>
+                <th>Mã sản phẩm</th>
+                <th colspan="2">Sản phẩm</th>
+                <th>Giá / 1</th>
+                <th>Số lượng</th>
+                <th>Xuất xứ</th>
+                <th colspan="3">Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="listfruit"></tbody>
+    </table>
+    <main>
+    <script>
+        let fruits = [
+            ["T01", "Táo", 10000, "1.png", "66", "Nhập khẩu"],
+            ["C01", "Chuối", 15000, "2.png", "23", "Nhập khẩu"],
+            ["N01", "Nho", 50000, "3.png", "18", "Ninh Thuận"],
+            ["M01", "Măng cụt", 35000, "4.png", "43", "Nam bộ"],
+            ["D01", "Dâu", 40000, "5.png", "54", "Mộc Châu"],
+            ["C02", "Cam", 20000, "6.png", "30", "Nhập khẩu"],
+            ["L01", "Lê", 20000, "7.png", "34", "Mộc Châu"],
+            ["O01", "Ổi", 23000, "8.png", "38", "Nghệ An"],
+        ];
+        let currentSelect = 0;
+        let show = document.getElementById("listfruit");
+
+        function displayall(){
+            let str = ``;
+            for(let i = 0; i < fruits.length; i++){
+                str += `<tr>
+                            <td>${fruits[i][0]}</td>
+                            <td>${fruits[i][1]}</td>
+                            <td><img src="images/${fruits[i][3]}" width="100"></td>
+                            <td>${fruits[i][2]} VNĐ</td>
+                            <td>${fruits[i][4]}</td>
+                            <td>${fruits[i][5]}</td>
+                            <td><button onclick=showfruit(${i})>Chi tiết</button></td>
+                            <td><button onclick=update(${i})>Sửa</button></td>
+                            <td><button onclick="deletefruit(${i})">Xóa</button></td>
+                        </tr>`;
+            }
+            show.innerHTML = str;
+        }
+        displayall();
+
+        function showfruit(index){
+            let str = `Loại quả: ${fruits[index][1]}, Giá: ${fruits[index][2]} VNĐ / 1, Số lượng: ${fruits[index][4]}, Xuất xứ: ${fruits[index][5]}`
+            alert(str);
+        }
+        
+
+        function addfruit(){
+            document.getElementById("form1").style.display = "block";
+            closeupdate()
+            
+        }
+        
+        function addfruit2(){
+            let idfruit = document.getElementById("addid").value;
+            let namefruit = document.getElementById("addname").value;
+            let pricefruit = document.getElementById("addprice").value;
+            let quantityfruit = document.getElementById("addquantity").value;
+            let originfruit = document.getElementById("addorigin").value;
+            if(idfruit == "" || namefruit == ""){
+                alert("Vui lòng nhập đầy đủ thông tin")
+                return;
+            }
+            fruits.push([idfruit, namefruit, pricefruit,"img.png" , quantityfruit, originfruit]);
+            alert("Thêm thành công");
+            displayall();
+            form1.reset();
+        }
+
+        function deletefruit(index){    
+            fruits.splice(index, 1);
+            displayall();
+        }
+
+        
+        function update(index){
+            
+            document.getElementById("editid").value = fruits[index][0];
+            document.getElementById("editname").value = fruits[index][1];
+            document.getElementById("editprice").value = fruits[index][2];
+            document.getElementById("editquantity").value = fruits[index][4];
+            document.getElementById("editorigin").value = fruits[index][5];
+            currentSelect = index;
+            document.getElementById("form2").style.display = "block";
+            closeadd();
+            
+        }
+
+        function update2(index){
+            let idnew = document.getElementById("editid").value;
+            let namenew = document.getElementById("editname").value;
+            let pricenew = document.getElementById("editprice").value;
+            let quantitynew = document.getElementById("editquantity").value;
+            let originnew = document.getElementById("editorigin").value;
+            if(idnew == "" || namenew == "" || pricenew == "" ){
+                alert("Vui lòng nhập đầy đủ thông tin");
+                return;
+            }else{
+                alert("Cập nhật thành công");
+            } 
+            fruits[currentSelect][0] = idnew;
+            fruits[currentSelect][1] = namenew;
+            fruits[currentSelect][2] = pricenew;
+            fruits[currentSelect][4] = quantitynew;
+            fruits[currentSelect][5] = originnew;
+
+            displayall();
+            form2.reset();
+        }
+
+
+        function closeupdate(){
+            document.getElementById("form2").style.display = "none";
+            
+        }
+
+        function closeadd(){
+            document.getElementById("form1").style.display = "none";
+            
+        }
+
+        displayall();
+    </script>
+</body>
+</html>

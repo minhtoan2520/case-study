@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<style>
+    .requiredid::after{
+        
+        content: "*";
+        color: red;
+    }
+</style>
+<body>
+    <form action="" id="formregister">
+        <h1>Đăng ký tài khoản</h1>
+        <label>
+            <p class="requiredid">Tên đăng nhập</p>
+            <input type="text" id="usernamenew" required>
+            <p class="requiredid">Mật khẩu</p>
+            <input type="text" id="Passwordnew" required>
+        </label>
+        <br><br>
+        <button type="button" id="registernew">Đăng Ký</button>
+        <br><br>
+        <a>Đã có tài khoản?</a>
+        <a onmouseover="this.style.color='red'" onmouseout="this.style.color=''" href="login.html">Đăng nhập</a>
+        <button type="button" onclick="window.location.href='login.html'">Về trang chủ</button>
+    </form>
+</body>
+</html>
