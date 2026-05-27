@@ -57,11 +57,19 @@
         font-size: 40px;
         background-color: #e9df57;
     }
+    a{
+        padding-right: 70%;
+        font-size: 20px;
+        color: red;
+        font-weight: bold;
+        font-family:Arial, Helvetica, sans-serif;
+    }
 </style>
 <body>
     <h1>Quản lý danh sách cửa hàng hoa quả</h1>
     <button type="button" onclick="logout()" style="margin-left:90%;">Đăng xuất</button>
     <hr>
+    <a id="totalfruit">Tổng:</a>
     <button type="button" onclick="addfruit()">Thêm quả</button>
     <br><br>
     <form id="form1" style="display: none;">
@@ -154,10 +162,12 @@
             alert("Thêm thành công");
             displayall();
             form1.reset();
+            total();
         }
 
         function deletefruit(index){    
             fruits.splice(index, 1);
+            total();
             displayall();
         }
 
@@ -195,6 +205,7 @@
 
             displayall();
             form2.reset();
+            total();
         }
 
 
@@ -208,6 +219,14 @@
             
         }
 
+        function total(){
+            let str = 0;
+            for(let i = 0; i < fruits.length; i++){
+                str += +(fruits[i][4]);
+                document.getElementById("totalfruit").innerHTML = "Tổng: " + str + " quả";
+            }
+        }
+        total();
         displayall();
     </script>
 </body>
