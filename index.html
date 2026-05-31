@@ -17,8 +17,8 @@
         font-size: 15px;
         margin-left: auto;
         margin-right: auto;
-        margin: 0 auto;
         border-collapse: collapse;
+        width: max-content;
     }
     tbody tr:hover {
         background-color: #ee8686;
@@ -29,11 +29,13 @@
         transition: 0.2s;
     }
     button{
-        padding: 10px 20px;
+        padding: 10px 15px;
+        margin-top: 10px;
+        margin-bottom: 10px; 
     }
     th, td{
-        padding-left: 50px;
-        padding-right: 50px
+        padding-left: 40px;
+        padding-right: 40px;
     }
     th{
         padding-bottom: 20px;
@@ -53,30 +55,36 @@
         color: #61104f;
         font-size: 40px;
         background-color: #e9df57;
+        margin-top: 0%;
+        margin-bottom: 10px;
     }
     a{
-        padding-right: 75%;
+        padding-right: 90% ;
         font-size: 20px;
         color: red;
         font-weight: bold;
         font-family:Arial, Helvetica, sans-serif;
     }
-    
+    .restockcolor{
+        background-color: rgb(208, 196, 241);
+        font-weight: bold;
+    }
 </style>
 <body>
-    <h1>Quản lý danh sách cửa hàng hoa quả</h1>
+    <h1>Quản lý số lượng hoa quả</h1>
     <button type="button" onclick="logout()" style="margin-left:90%;">Đăng xuất</button>
     <hr>
-    <button type="button" onclick="addfruit()">Thêm quả</button>
     <br>
     <a id="totalfruit">Tổng:</a>
-    <br><br>
+    <button type="button" onclick="addfruit()" style="margin-left:90%;">Nhập hàng</button>
+    <br>
     <form id="form1" style="display: none;">
         <input type="text" id="addid" placeholder="Nhập mã sản phẩm">
         <input type="text" id="addname" placeholder="Nhập tên loại quả">
         <input type="number" id="addprice" placeholder="Nhập giá">
         <input type="number" id="addquantity" placeholder="Nhập số lượng">
         <input type="text" id="addorigin" placeholder="Nhập nguồn gốc">
+        <input type="date" id="adddate">
         <button type="button" onclick="addfruit2()">Thêm</button>
     </form>
 
@@ -86,8 +94,20 @@
         <input type="number" id="editprice" placeholder="Sửa giá">
         <input type="number" id="editquantity" placeholder="Sửa số lượng">
         <input type="text" id="editorigin" placeholder="Sửa nguồn gốc">
+        <input type="date" id="editordate">
         <button type="button" onclick="update2()">Cập nhật</button>
     </form>
+
+    <form id="form3" style="display: none;">
+        <input type="text" id="outid" readonly>
+        <input type="text" id="outname" readonly>
+        <input type="number" id="outprice" readonly>
+        <input type="text" id="outquantity" placeholder="Nhập số lượng">
+        <input type="text" id="outorigin" readonly>
+        <input type="date" id="outdate">
+        <button type="button" onclick="outfruit2()">Xuất kho</button>
+    </form>
+    
     <table border="1" cellspacing="0" id="list">
         <thead>
             <tr>
@@ -96,36 +116,47 @@
                 <th>Giá / 1</th>
                 <th>Số lượng</th>
                 <th>Xuất xứ</th>
-                <th colspan="3">Hành động</th>
+                <th>Ngày nhập</th>
+                <th>Ghi chú</th>
+                <th colspan="4">Hành động</th>
             </tr>
         </thead>
         <tbody id="listfruit"></tbody>
     </table>
-    <main>
+    
+    <button type="button" id="reset" onclick="reset()">Khôi phục</button>
+
     <script>
-        let fruits = [
-            ["T01", "Táo", 10000, "1.png", "66", "Nhập khẩu"],
-            ["C01", "Chuối", 15000, "2.png", "23", "Nhập khẩu"],
-            ["N01", "Nho", 50000, "3.png", "18", "Ninh Thuận"],
-            ["M01", "Măng cụt", 35000, "4.png", "43", "Nam bộ"],
-            ["D01", "Dâu", 40000, "5.png", "54", "Mộc Châu"],
-            ["C02", "Cam", 20000, "6.png", "30", "Nhập khẩu"],
-            ["L01", "Lê", 20000, "7.png", "34", "Mộc Châu"],
-            ["O01", "Ổi", 23000, "8.png", "38", "Nghệ An"],
+        let fruits = [];
+        let defaultfruits = [
+            ["T01", "Táo", 10000, "1.png", "568", "Nhập khẩu", "2026-05-25"],
+            ["C01", "Chuối", 15000, "2.png", "183", "Nhập khẩu", "2026-05-22"],
+            ["N01", "Nho", 50000, "3.png", "224", "Ninh Thuận", "2026-05-21"],
+            ["M01", "Măng cụt", 35000, "4.png", "133", "Nam bộ", "2026-05-16"],
+            ["D01", "Dâu", 40000, "5.png", "1234", "Mộc Châu","2026-05-11"],
+            ["C02", "Cam", 20000, "6.png", "410", "Nhập khẩu","2026-05-09"],
+            ["L01", "Lê", 20000, "7.png", "234", "Mộc Châu","2026-05-29"],
+            ["O01", "Ổi", 23000, "8.png", "382", "Nghệ An","2026-05-30"],
         ];
+        
         let currentSelect = 0;
+        let currentSelect2 = 0;
         let show = document.getElementById("listfruit");
+        loaddata();
 
         function displayall(){
             let str = ``;
             for(let i = 0; i < fruits.length; i++){
-                str += `<tr>
+                str += `<tr class="${fruits[i][7] == 'Restock' ? 'restockcolor' : ''}">
                             <td>${fruits[i][0]}</td>
                             <td>${fruits[i][1]}</td>
                             <td><img src="images/${fruits[i][3]}" width="100"></td>
                             <td>${fruits[i][2]} VNĐ</td>
                             <td>${fruits[i][4]}</td>
                             <td>${fruits[i][5]}</td>
+                            <td>${datearr(fruits[i][6])}</td>
+                            <td>${fruits[i][7] || ""}</td>
+                            <td><button onclick=outfruit(${i})>Xuất hàng</button></td>
                             <td><button onclick=showfruit(${i})>Chi tiết</button></td>
                             <td><button onclick=update(${i})>Sửa</button></td>
                             <td><button onclick="deletefruit(${i})">Xóa</button></td>
@@ -136,38 +167,56 @@
         displayall();
 
         function showfruit(index){
-            let str = `Loại quả: ${fruits[index][1]}, Giá: ${fruits[index][2]} VNĐ / 1, Số lượng: ${fruits[index][4]}, Xuất xứ: ${fruits[index][5]}`
-            alert(str);
+            alert(`Sản phẩm: ${fruits[index][1]}\nGiá: ${fruits[index][2]} VNĐ / 1\nSố lượng: ${fruits[index][4]}\nXuất xứ: ${fruits[index][5]}\nNgày nhập về: ${datearr(fruits[index][6])}\n\n\n                      HÀNG NGON GIÁ RẺ MUA ĐÊ, MUA ĐÊ ^^`)
+            
         }
         
 
         function addfruit(){
             document.getElementById("form1").style.display = "block";
-            closeupdate()
-            
+            document.getElementById("adddate").value = new Date().toISOString().split("T")[0];
+            closeupdate();
+            closeout();
         }
         
-        function addfruit2(){
+        function addfruit2(index){
             let idfruit = document.getElementById("addid").value;
             let namefruit = document.getElementById("addname").value;
             let pricefruit = document.getElementById("addprice").value;
             let quantityfruit = document.getElementById("addquantity").value;
             let originfruit = document.getElementById("addorigin").value;
+            let datefruit = document.getElementById("adddate").value;
+            
             if(idfruit == "" || namefruit == ""){
-                alert("Vui lòng nhập đầy đủ thông tin")
+                alert("Vui lòng nhập đầy đủ thông tin");
+                return;
+            }else if(quantityfruit <= 0){
+                alert("Vui lòng nhập đúng số lượng");
                 return;
             }
-            fruits.push([idfruit, namefruit, pricefruit,"img.png" , quantityfruit, originfruit]);
-            alert("Thêm thành công");
+            let note = "";
+            for(let i = 0; i < fruits.length; i++){
+                if(idfruit == fruits[i][0] && namefruit == fruits[i][1]){
+                    note = "Restock";
+                    break;
+                }
+            }
+            fruits.push([idfruit, namefruit, pricefruit, "image.png", quantityfruit, originfruit, datefruit, note]);
+            alert("Mã: " + idfruit + "\nSản phẩm: " + namefruit + "\nGiá: " + pricefruit +" VNĐ" + "\nSố lượng: " + quantityfruit + "\nXuất xứ: " + originfruit + "\nNgày nhập: " + datearr(datefruit) + "\n\nTHÊM THÀNH CÔNG!");
             displayall();
             form1.reset();
             total();
+            savedata();
+            addfruit();
         }
 
-        function deletefruit(index){    
-            fruits.splice(index, 1);
-            total();
-            displayall();
+        function deletefruit(index){  
+            if(confirm("Xóa sản phẩm " + fruits[index][0] + " - " + fruits[index][1] + "?")) {
+                fruits.splice(index, 1);
+                total();
+                displayall();
+                savedata();
+            }
         }
 
         
@@ -178,10 +227,11 @@
             document.getElementById("editprice").value = fruits[index][2];
             document.getElementById("editquantity").value = fruits[index][4];
             document.getElementById("editorigin").value = fruits[index][5];
+            document.getElementById("editordate").value = fruits[index][6];
             currentSelect = index;
             document.getElementById("form2").style.display = "block";
             closeadd();
-            
+            closeout();
         }
 
         function update2(index){
@@ -190,6 +240,7 @@
             let pricenew = document.getElementById("editprice").value;
             let quantitynew = document.getElementById("editquantity").value;
             let originnew = document.getElementById("editorigin").value;
+            let datenew = document.getElementById("editordate").value;
             if(idnew == "" || namenew == "" || pricenew == "" ){
                 alert("Vui lòng nhập đầy đủ thông tin");
                 return;
@@ -201,11 +252,24 @@
             fruits[currentSelect][2] = pricenew;
             fruits[currentSelect][4] = quantitynew;
             fruits[currentSelect][5] = originnew;
+            fruits[currentSelect][6] = datenew;
 
             displayall();
             form2.reset();
             total();
+            savedata();
+            closeupdate();
         }
+
+        function total(){
+            let str = 0;
+            for(let i = 0; i < fruits.length; i++){
+                str += +(fruits[i][4]);
+                document.getElementById("totalfruit").innerHTML = "Tổng: " + str + " quả";
+            }
+        }
+        total();
+        
 
 
         function closeupdate(){
@@ -218,15 +282,86 @@
             
         }
 
-        function total(){
-            let str = 0;
-            for(let i = 0; i < fruits.length; i++){
-                str += +(fruits[i][4]);
-                document.getElementById("totalfruit").innerHTML = "Tổng: " + str + " quả";
+        function closeout(){
+            document.getElementById("form3").style.display = "none";
+        }
+
+        function outfruit(index){
+            document.getElementById("outid").value = fruits[index][0];
+            document.getElementById("outname").value = fruits[index][1];
+            document.getElementById("outprice").value = fruits[index][2];
+            document.getElementById("outorigin").value = fruits[index][5];
+
+            currentSelect2 = index;
+            document.getElementById("form3").style.display = "block";
+            document.getElementById("outdate").value = new Date().toISOString().split("T")[0];
+            closeupdate();
+            closeadd();
+        }
+
+        function outfruit2(index){
+            let outidnew = document.getElementById("outid").value;
+            let outnamenew = document.getElementById("outname").value;
+            let outpricenew = document.getElementById("outprice").value;
+            let outquantitynew = document.getElementById("outquantity").value;
+            let outoriginnew = document.getElementById("outorigin").value;
+            let outdatenew = document.getElementById("outdate").value;
+
+            let totaldifference = +fruits[currentSelect2][4];
+
+            if(outnamenew == "" || outquantitynew == "" || outpricenew == ""){
+                alert("Vui lòng nhập đầy đủ thông tin");
+                return;
+            }
+            else if(outquantitynew > totaldifference){
+                alert("Số lượng không đủ, vui lòng kiểm tra lại");
+                return;
+            }
+            else if(outquantitynew <= 0){
+                alert("Vui lòng nhập số lượng lớn hơn 0");
+                return;
+            }
+            else{
+                fruits[currentSelect2][4] = totaldifference - outquantitynew;
+                alert("Mã: " + outidnew + " - " + outnamenew + "\nGiá: " + outpricenew + " x " + " Số lượng: " + outquantitynew + " = " + outpricenew * outquantitynew + " VNĐ" + "\nXuất Xứ: " + outoriginnew + "\nNgày nhập kho: " + datearr(fruits[currentSelect2][6]) + "\nNgày xuất kho: " + datearr(outdatenew) + "\n\nXUẤT HÀNG THÀNH CÔNG!");
+                form3.reset();
+            } 
+            savedata();
+            total();
+            displayall();
+            closeout();
+        }
+        //displayall();
+        
+        function datearr(str){
+            let arr = str.split("-");
+            return `${arr[2]}/${arr[1]}/${arr[0]}`;  
+        }
+
+        function savedata(){
+            localStorage.setItem("fruits", JSON.stringify(fruits));
+        }
+
+        function loaddata(){
+            let data = localStorage.getItem("fruits");
+            if(data){
+                fruits = JSON.parse(data);
+            }else{
+                fruits = defaultfruits;
+                savedata();
+            }
+            displayall();
+            total();
+        }
+
+        function reset(){
+            if(confirm("Khôi phục dữ liệu?")){
+                fruits = [...defaultfruits];
+                savedata();
+                displayall();
+                total();
             }
         }
-        total();
-        displayall();
     </script>
 </body>
 </html>
