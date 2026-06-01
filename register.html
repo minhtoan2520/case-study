@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Đăng ký tài khoản</title>
 </head>
 <style>
     .requiredid::after{
@@ -11,22 +11,98 @@
         content: "*";
         color: red;
     }
+    .requiredid{
+        margin-left: 10%;
+        font-size: 25px;
+    }
+    body{
+        background-color: rgb(247, 225, 196);
+        font-family: 'Times New Roman', Times, serif;
+    }
+    #formregister{
+        position: absolute;
+        width: 500px;
+        height: 570px;
+        background-color: rgb(140, 173, 158);
+        border-radius: 20px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+    }
+    h1{
+        text-align: center;
+        font-size: 50px;
+    }
+    input{
+        font-size: 20px;
+        margin-left: 10%;
+        padding: 25px;
+        padding-right: 26%;
+        border-radius: 40px;
+        border: 0;
+    }
+    button{
+        background-color: rgb(131, 131, 114);
+        font-size: 20px;
+        border-radius: 40px;
+        border: 0;
+        margin-left: 28%;
+        margin-top: 20px;
+        padding-left: 20%;
+        padding-right: 20%;
+        padding: 15px 70px;
+    }
+    button:hover{
+        background-color: rgb(110, 72, 72);
+        transition: 0.2s;
+    }
+    .settinga{
+        margin-left: 27%;
+    }
 </style>
 <body>
     <form action="" id="formregister">
         <h1>Đăng ký tài khoản</h1>
         <label>
             <p class="requiredid">Tên đăng nhập</p>
-            <input type="text" id="usernamenew" required>
+            <input type="text" id="usernamenew" name="usernamenew" placeholder="test" required>
             <p class="requiredid">Mật khẩu</p>
-            <input type="text" id="Passwordnew" required>
+            <input type="password" id="passwordnew" name="passwordnew" placeholder="123123" required>
         </label>
         <br><br>
-        <button type="button" id="registernew">Đăng Ký</button>
+        <button type="button" onclick="register()">Đăng Ký</button>
         <br><br>
-        <a>Đã có tài khoản?</a>
+        <a class="settinga">Đã có tài khoản?</a>
         <a onmouseover="this.style.color='red'" onmouseout="this.style.color=''" href="login.html">Đăng nhập</a>
-        <button type="button" onclick="window.location.href='login.html'">Về trang chủ</button>
     </form>
+    <script>
+        function register(){
+            let usernamenew = document.getElementById("usernamenew").value;
+            let passwordnew = document.getElementById("passwordnew").value;
+            
+            if(usernamenew == "" && passwordnew == ""){
+                alert("Tên đăng nhập & mật khẩu không được bỏ trống");
+            }else if(usernamenew == ""){
+                alert("Tên đăng nhập không được bỏ trống");
+            }else if(passwordnew == ""){
+                alert("Vui lòng nhập mật khẩu");
+            }else{
+                let user = {
+                    username: usernamenew,
+                    password: passwordnew
+                }
+                localStorage.setItem("user", JSON.stringify(user));
+                alert("Đăng ký thành công");
+                window.location.href = "login.html";
+            }
+        }
+
+        document.addEventListener("keydown",evt => {
+            if(evt.key === "Enter"){
+                register();
+            }
+        })
+    </script>
 </body>
 </html>

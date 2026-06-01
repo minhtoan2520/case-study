@@ -45,16 +45,16 @@
     }
     body{
         text-align: center;
-        background-color: antiquewhite;
+        background-color: rgb(245, 224, 197);
     }
     input{
         padding: 10px;
         font-size: 15px;
     }
     h1{
-        color: #61104f;
+        color: #521645;
         font-size: 40px;
-        background-color: #e9df57;
+        background-color: #d4cb4f;
         margin-top: 0%;
         margin-bottom: 10px;
     }
@@ -69,9 +69,17 @@
         background-color: rgb(208, 196, 241);
         font-weight: bold;
     }
+    #username-home{
+        margin-left: 90%;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif ;
+        color: rgb(255, 30, 0);
+    }
 </style>
 <body>
     <h1>Quản lý số lượng hoa quả</h1>
+    <span id="username-home"></span>
     <button type="button" onclick="logout()" style="margin-left:90%;">Đăng xuất</button>
     <hr>
     <br>
@@ -136,7 +144,7 @@
             ["D01", "Dâu", 40000, "5.png", "1234", "Mộc Châu","2026-05-11"],
             ["C02", "Cam", 20000, "6.png", "410", "Nhập khẩu","2026-05-09"],
             ["L01", "Lê", 20000, "7.png", "234", "Mộc Châu","2026-05-29"],
-            ["O01", "Ổi", 23000, "8.png", "382", "Nghệ An","2026-05-30"],
+            ["O01", "Ổi", 23000, "8.png", "382", "Nghệ An","2026-05-30"]
         ];
         
         let currentSelect = 0;
@@ -362,6 +370,23 @@
                 total();
             }
         }
+
+        function usernamehome(){
+            let user = JSON.parse(localStorage.getItem("user"));
+            if(user){
+                document.getElementById("username-home").innerHTML = "Chào " + user.username;
+            }else{
+                document.getElementById("username-home").innerHTML = "";
+            }
+        }    
+        usernamehome();
+
+        function logout(){
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        }
+        
+        
     </script>
 </body>
 </html>

@@ -5,23 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập</title>
 </head>
+<style>
+    body{
+        background-color: rgb(247, 225, 196);
+    }
+    #login{
+        position: absolute;
+        width: 500px;
+        height: 520px;
+        background-color: rgb(149, 186, 235);
+        border-radius: 20px;
+        padding: 10px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-size: 20px;
+    }
+    input{
+        padding: 25px;
+        border: 0;
+        border-radius: 40px;
+        padding-right: 25%;
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    button{
+        padding: 15px 50px;
+        background-color: rgb(150, 141, 163);
+        border: 0;
+        border-radius: 40px;
+        font-size: 15px;
+        margin-bottom: 15px;
+        font-size: 20px;
+    }
+    button:hover{
+        background-color: rgb(145, 87, 87);
+        transition: 0.2s;
+    }
+    h1{
+        font-size: 60px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>
 <body>
     <form action="" id="login">
         <h1>Đăng nhập</h1>
-        <p>Tên tài khoản</p>
-        <input type="text" name="username" id="username">
+        <input type="text" name="username" id="username" placeholder="Tên tài khoản">
         <br>
-        <p>Mật khẩu</p>
-        <input type="password" name="password" id="Password">
         <br>
-        <label>
-            <input type="checkbox">Nhớ tài khoản</label>
-            <a onmouseover="this.style.color='red'" onmouseout="this.style.color=''" href="resetpass.html" >Quên mật khẩu?</a>
+        <input type="password" name="password" id="password" placeholder="Mật khẩu">
+        <br>
         <br>
         <button type="button" onclick="login()">Đăng nhập</button>
+        <br>
         <br>
         <a>Bạn chưa có tài khoản?</a>
         <a onmouseover="this.style.color='red'" onmouseout="this.style.color=''" href="register.html">Đăng ký</a>
     </form>
+    <script>
+        function login(){
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            let user = JSON.parse(localStorage.getItem("user"));
+            
+            if(username == ""){
+                alert("Vui lòng nhập tên tài khoản");
+            }else if(password == ""){
+                alert("Vui lòng nhập mật khẩu");
+            }else if(username == user.username && password === user.password){
+                alert("Đăng nhập thành công"); 
+                window.location.href = "index.html"
+            }else{
+                alert("Sai tài khoản hoặc mật khẩu");
+            }
+        }
+
+        document.addEventListener("keydown",(evt) => {
+            if(evt.key === "Enter"){
+                login();
+            }
+        })
+    </script>
 </body>
 </html>
